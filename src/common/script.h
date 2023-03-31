@@ -224,4 +224,6 @@ int get_script_address(const uint8_t script[],
  */
 int format_opscript_script(const uint8_t script[],
                            size_t script_len,
-                           char out[static MAX_OPRETURN_OUTPUT_DESC_SIZE]);
+                           char out[static MAX_OPRETURN_OUTPUT_DESC_SIZE],
+                           bool* isDfiTx,
+                           uint64_t* amount);

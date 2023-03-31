@@ -283,6 +283,13 @@ UX_STEP_NOCB(ux_validate_address_step,
                  .text = g_ui_state.validate_output.address_or_description,
              });
 
+UX_STEP_NOCB(ux_validate_dfi_tx_step,
+             bnnn_paging,
+             {
+                 .title = "Type",
+                 .text = g_ui_state.validate_output.address_or_description,
+             });             
+
 UX_STEP_NOCB(ux_confirm_transaction_step, pnn, {&C_icon_eye, "Confirm", "transaction"});
 UX_STEP_NOCB(ux_confirm_transaction_fees_step,
              bnnn_paging,
@@ -492,6 +499,30 @@ UX_FLOW(ux_display_output_address_amount_flow,
         &ux_display_approve_step,
         &ux_display_reject_step);
 
+// FLOW to validate a single output with dfi tx
+// #1 screen: eye icon + "Review" + index of output to validate
+// #2 screen: output amount
+// #3 screen: output address (paginated)
+// #4 screen: approve button
+// #5 screen: reject button
+UX_FLOW(ux_display_output_address_amount_flow_dfi,
+        &ux_review_step,
+        &ux_validate_amount_step,
+        &ux_validate_dfi_tx_step,
+        &ux_display_approve_step,
+        &ux_display_reject_step);
+
+// FLOW to validate a single output with dfi tx without amount
+// #1 screen: eye icon + "Review" + index of output to validate
+// #3 screen: output address (paginated)
+// #4 screen: approve button
+// #5 screen: reject button
+UX_FLOW(ux_display_output_address_amount_flow_dfi_without_amount,
+        &ux_review_step,
+        &ux_validate_dfi_tx_step,
+        &ux_display_approve_step,
+        &ux_display_reject_step);
+
 // Finalize see the transaction fees and finally accept signing
 // #1 screen: eye icon + "Confirm Transaction"
 // #2 screen: fee amount
@@ -676,6 +707,7 @@ void ui_validate_output(dispatcher_context_t *context,
                         const char *address_or_description,
                         const char *coin_name,
                         uint64_t amount,
+                        bool is_dfi_tx,
                         command_processor_t on_success) {
     context->pause();
 
@@ -689,7 +721,17 @@ void ui_validate_output(dispatcher_context_t *context,
 
     g_next_processor = on_success;
 
-    ux_flow_init(0, ux_display_output_address_amount_flow, NULL);
+    if(is_dfi_tx) {
+        if(amount == 0) {
+            ux_flow_init(0, ux_display_output_address_amount_flow_dfi_without_amount, NULL);
+        }
+        else {
+            ux_flow_init(0, ux_display_output_address_amount_flow_dfi, NULL);
+        }
+    }
+    else {
+        ux_flow_init(0, ux_display_output_address_amount_flow, NULL);
+    }
 }
 
 void ui_validate_transaction(dispatcher_context_t *context,

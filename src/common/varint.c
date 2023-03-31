@@ -45,6 +45,8 @@ int varint_read(const uint8_t *in, size_t in_len, uint64_t *value) {
 
     uint8_t prefix = in[0];
 
+    PRINTF("Prefix %d\n", prefix);
+
     if (prefix == 0xFD) {
         if (in_len < 3) {
             return -1;

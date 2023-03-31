@@ -12,6 +12,13 @@
 #include "../crypto.h"
 #endif
 
+#define IS_DEFICHAIN 1
+
+#ifdef IS_DEFICHAIN
+#include "dfi.h"
+#endif
+
+
 int get_script_type(const uint8_t script[], size_t script_len) {
     if (script_len == 25 && script[0] == OP_DUP && script[1] == OP_HASH160 && script[2] == 0x14 &&
         script[23] == OP_EQUALVERIFY && script[24] == OP_CHECKSIG) {
@@ -79,6 +86,8 @@ int get_script_address(const uint8_t script[],
             // witness program version
             int version = (script[0] == 0 ? 0 : script[0] - 80);
 
+            
+
             // make sure that the output buffer is long enough
             if (out_len < 73 + strlen(coin_config->native_segwit_prefix)) {
                 return -1;
@@ -89,7 +98,6 @@ int get_script_address(const uint8_t script[],
                                          version,
                                          script + 2,
                                          prog_len);
-
             if (ret != 1) {
                 return -1;  // should never happen
             }
@@ -110,11 +118,44 @@ int get_script_address(const uint8_t script[],
 
 int format_opscript_script(const uint8_t script[],
                            size_t script_len,
-                           char out[static MAX_OPRETURN_OUTPUT_DESC_SIZE]) {
+                           char out[static MAX_OPRETURN_OUTPUT_DESC_SIZE],
+                           bool* isDfiTx,
+                           uint64_t* amount) {
     if (script_len == 0 || script[0] != OP_RETURN) {
         return -1;
     }
 
+  
+#ifdef IS_DEFICHAIN
+
+    //script needs to be at least 5 char long DFI_TX_HEADER + len of the DFI script
+    if(script_len >= 5) {
+        PRINTF("CHECK IF DFI SCRIPT\n");
+        int defiScriptLen = -1; 
+        int dfiHeaderPos = -1;
+        if(script_len < OP_PUSHDATA1) {
+            defiScriptLen = script[1];
+            dfiHeaderPos = 2;
+        }
+        else if(script_len <= 0xff) {
+            defiScriptLen = script[2];
+            dfiHeaderPos = 3;
+        }
+
+        PRINTF("DFI Script Length: %d headerpos: %d\n", defiScriptLen, dfiHeaderPos);
+
+        if(dfiHeaderPos > 0) {
+            uint8_t dfiHeader[] = DFI_TX_HEADER;
+            if(memcmp(&script[dfiHeaderPos], dfiHeader, 4) == 0) {
+
+                PRINTF("PARSE DFI SCRIPT\n");
+                *isDfiTx = true;
+                return get_dfi_tx_type(&script[dfiHeaderPos+4], defiScriptLen, out, MAX_OPRETURN_OUTPUT_DESC_SIZE, amount);
+            }
+        }
+    }
+
+#endif
     strcpy(out, "OP_RETURN ");
     int out_ctr = 10;
 
@@ -173,5 +214,8 @@ int format_opscript_script(const uint8_t script[],
     }
 
     out[out_ctr++] = '\0';
+    
+    PRINTF("custom script %s\n", out);
+    
     return out_ctr;
 }

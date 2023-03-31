@@ -68,6 +68,7 @@ void ui_validate_output(dispatcher_context_t *context,
                         const char *address_or_description,
                         const char *coin_name,
                         uint64_t amount,
+                        bool is_dfi_tx,
                         command_processor_t on_success);
 
 void ui_validate_transaction(dispatcher_context_t *context,

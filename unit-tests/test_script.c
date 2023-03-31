@@ -128,19 +128,21 @@ static void test_get_script_type_invalid(void **state) {
     assert_int_equal(get_script_type(segwit_too_long, sizeof(segwit_too_long)), -1);
 }
 
-#define CHECK_VALID_TESTCASE(script, expected)                         \
-    {                                                                  \
-        char out[MAX_OPRETURN_OUTPUT_DESC_SIZE];                       \
-        int ret = format_opscript_script(script, sizeof(script), out); \
-        assert_int_equal(ret, sizeof(expected));                       \
-        assert_string_equal(out, expected);                            \
+#define CHECK_VALID_TESTCASE(script, expected)                                      \ 
+    {                                                                               \
+        char out[MAX_OPRETURN_OUTPUT_DESC_SIZE];                                    \
+        bool is_dfi_tx = false;                                                     \
+        int ret = format_opscript_script(script, sizeof(script), out, &is_dfi_tx);  \
+        assert_int_equal(ret, sizeof(expected));                                    \
+        assert_string_equal(out, expected);                                         \
     }
 
-#define CHECK_INVALID_TESTCASE(script)                                 \
-    {                                                                  \
-        char out[MAX_OPRETURN_OUTPUT_DESC_SIZE];                       \
-        int ret = format_opscript_script(script, sizeof(script), out); \
-        assert_int_equal(ret, -1);                                     \
+#define CHECK_INVALID_TESTCASE(script)                                              \
+    {                                                                               \
+        char out[MAX_OPRETURN_OUTPUT_DESC_SIZE];                                    \
+       bool is_dfi_tx = false;                                                      \
+        int ret = format_opscript_script(script, sizeof(script), out, &is_dfi_tx);  \
+        assert_int_equal(ret, -1);                                                  \
     }
 
 static void test_format_opscript_script_valid(void **state) {

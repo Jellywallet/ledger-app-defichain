@@ -867,7 +867,7 @@ static void process_output_map(dispatcher_context_t *dc) {
                                                sizeof(state->cur.in_out.scriptPubKey));
 
     if (result_len == -1 || result_len > (int) sizeof(state->cur.in_out.scriptPubKey)) {
-        SEND_SW(dc, SW_INCORRECT_DATA);
+            SEND_SW(dc, SW_INCORRECT_DATA);
         return;
     }
 
@@ -908,7 +908,7 @@ static void output_validate_external(dispatcher_context_t *dc) {
     sign_psbt_state_t *state = (sign_psbt_state_t *) &G_command_state;
 
     LOG_PROCESSOR(dc, __FILE__, __LINE__, __func__);
-
+    bool is_dfi_tx = false;
     // show this output's address
     char output_address[MAX(MAX_ADDRESS_LENGTH_STR + 1, MAX_OPRETURN_OUTPUT_DESC_SIZE)];
     int address_len = get_script_address(state->cur.in_out.scriptPubKey,
@@ -919,9 +919,10 @@ static void output_validate_external(dispatcher_context_t *dc) {
     if (address_len < 0) {
         // script does not have an address; check if OP_RETURN
         if (is_opreturn(state->cur.in_out.scriptPubKey, state->cur.in_out.scriptPubKey_len)) {
+            
             int res = format_opscript_script(state->cur.in_out.scriptPubKey,
                                              state->cur.in_out.scriptPubKey_len,
-                                             output_address);
+                                             output_address, &is_dfi_tx, &state->cur.output.value);
             if (res == -1) {
                 PRINTF("Invalid or unsupported OP_RETURN for output %d\n", state->cur_output_index);
                 SEND_SW(dc, SW_NOT_SUPPORTED);
@@ -950,12 +951,15 @@ static void output_validate_external(dispatcher_context_t *dc) {
             return;
         }
     } else {
+
+        
         // Show address to the user
         ui_validate_output(dc,
                            state->external_outputs_count,
                            output_address,
                            G_coin_config->name_short,
                            state->cur.output.value,
+                           is_dfi_tx,
                            output_next);
         return;
     }
