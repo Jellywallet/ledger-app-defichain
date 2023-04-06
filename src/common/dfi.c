@@ -16,7 +16,6 @@
 
 #include "dfi.h"
 
-
 int getScript(const uint8_t script[], size_t script_len, uint8_t *out);
 
 #ifndef IS_DEFICHAIN_TESTNET
@@ -336,12 +335,11 @@ int get_dfi_tx_type(const uint8_t script[],
                     size_t out_len,
                     uint64_t *amount,
                     global_context_t *G_coin_config) {
-
     if (script_len <= 0) {
         return -1;
     }
 
-    PRINTF("DFI_SCRIPT (%d): ", script_len); 
+    PRINTF("DFI_SCRIPT (%d): ", script_len);
     for (size_t i = 0; i < script_len; i++) {
         PRINTF("%02X", script[i]);
     }
@@ -358,21 +356,16 @@ int get_dfi_tx_type(const uint8_t script[],
             int from_address_len = getScript(&script[offset], script_len - offset, from_address);
             offset += from_address_len;
 
-            PRINTF("FromAddressLen: %d (offset %d)\n", from_address_len, offset);
-            
             uint64_t from_token = -1;
             offset += varint_read(&script[offset], script_len - offset, &from_token);
 
             char from_token_str[10];
             size_t from_token_str_len = tokenToText(from_token, from_token_str, 10);
 
-            PRINTF("FROM_TOKEN (%d): %d - %s\n", offset, (int)from_token, from_token_str);
-
             uint64_t from_amount = read_u64_le(&script[offset], 0);
             offset += 8;
 
             *amount = from_amount;
-            PRINTF("FROM_AMOUNT (%d): %d\n", offset, (int)from_amount);
 
             uint8_t to_address[MAX_ADDRESS_LENGTH_STR];
             int to_address_len = getScript(&script[offset], script_len - offset, to_address);
@@ -383,8 +376,6 @@ int get_dfi_tx_type(const uint8_t script[],
 
             char to_token_str[10];
             size_t to_token_str_len = tokenToText(to_token, to_token_str, 10);
-
-            PRINTF("TO_TOKEN (%d): %d - %s\n", offset, (int)to_token, to_token_str);
 
             uint64_t max_price = read_u64_be(script, offset);
             offset += 8;
@@ -398,18 +389,11 @@ int get_dfi_tx_type(const uint8_t script[],
             strcpy(out + out_ctr, from_token_str);
             out_ctr += from_token_str_len;
 
-            PRINTF("(%d/%d) %s\n", out_ctr, out_len, out);
-
             strcpy(out + out_ctr, " to d");
             out_ctr+= 5;
 
-            PRINTF("(%d/%d) %s\n", out_ctr, out_len, out);
-
             strcpy(out + out_ctr, to_token_str);
             out_ctr += to_token_str_len;
-
-
-            PRINTF("(%d/%d) %s\n", out_ctr, out_len, out);
             return out_ctr;
         }
         case UtxosToAccount: {
@@ -439,18 +423,13 @@ int get_dfi_tx_type(const uint8_t script[],
 
             char output_address[MAX(MAX_ADDRESS_LENGTH_STR + 1, MAX_OPRETURN_OUTPUT_DESC_SIZE)];
             int address_len = get_script_address(to_address,
-                                        to_address_len-1,
-                                        G_coin_config,
-                                        output_address,
-                                        sizeof(output_address));
-
-            PRINTF("output_address is: %d (offset %d)\n", address_len, offset);
-            PRINTF("output_address: %s\n", output_address);
+                                                    to_address_len-1,
+                                                    G_coin_config,
+                                                    output_address,
+                                                    sizeof(output_address));
 
             int tokenLen = script[offset];
             offset++;
-
-            PRINTF("Token len is %d\n", tokenLen);
 
             uint32_t token = read_u32_le(&script[offset], 0);
             offset += 4;
@@ -458,13 +437,9 @@ int get_dfi_tx_type(const uint8_t script[],
             char token_str[10];
             size_t token_str_len = tokenToText(token, token_str, 10);
 
-            PRINTF("TOKEN (%d): %d - %s\n", offset, (int)token, token_str);
-
             uint64_t amountU64 = read_u64_le(&script[offset], 0);
             offset += 8;
-
             *amount = amountU64;
-            PRINTF("FROM_AMOUNT (%d): %d\n", offset, (int)amountU64);
 
             int out_ctr = 6;
             strcpy(out, "Send d");
@@ -475,11 +450,8 @@ int get_dfi_tx_type(const uint8_t script[],
             strcpy(out+ out_ctr, " to ");
             out_ctr+=4;
 
-            PRINTF("(%d/%d) %s\n", out_ctr, out_len, out);
-
             strcpy(out + out_ctr, output_address);
             out_ctr += address_len;
-            PRINTF("(%d/%d) %s\n", out_ctr, out_len, out);
             return out_ctr;
         }
         case AnyAccountsToAccounts: {
@@ -492,8 +464,6 @@ int get_dfi_tx_type(const uint8_t script[],
             int from_address_len = getScript(&script[offset], script_len - offset, from_address);
             offset += from_address_len;
 
-            PRINTF("FromAddressLen: %d (offset %d)\n", from_address_len, offset);
-
             int fromTokenLen = script[offset];
             offset++;
 
@@ -503,12 +473,8 @@ int get_dfi_tx_type(const uint8_t script[],
             char from_token_str[10];
             size_t from_token_str_len = tokenToText(from_token, from_token_str, 10);
 
-            PRINTF("FROM_TOKEN (%d): %d - %s\n", offset, (int)from_token, from_token_str);
-
             uint64_t from_amount = read_u64_le(&script[offset], 0);
             offset += 8;
-
-            PRINTF("FROM_AMOUNT (%d): %d\n", offset, (int)from_amount);
 
             int to_account_len = script[offset];
             offset++;
@@ -516,8 +482,6 @@ int get_dfi_tx_type(const uint8_t script[],
             uint8_t to_address[MAX_ADDRESS_LENGTH_STR];
             int to_address_len = getScript(&script[offset], script_len - offset, to_address);
             offset += to_address_len;
-
-            PRINTF("ToAddressLen: %d (offset %d)\n", to_address_len, offset);
 
             int tokenLen = script[offset];
             offset++;
@@ -528,14 +492,10 @@ int get_dfi_tx_type(const uint8_t script[],
             char token_str[10];
             size_t token_str_len = tokenToText(token, token_str, 10);
 
-            PRINTF("TO_TOKEN (%d): %d - %s\n", offset, (int)token, token_str);
-
             uint64_t to_amount = read_u64_le(&script[offset], 0);
             offset += 8;
 
             *amount = to_amount;
-            PRINTF("TO_AMOUNT (%d): %d\n", offset, (int)to_amount);
-
             return 0;
         }
         case AutoAuthPrep: {
@@ -555,8 +515,6 @@ int get_dfi_tx_type(const uint8_t script[],
             int balances = script[offset];
             offset++;
 
-            PRINTF("Token len is %d\n", balances);
-
             uint32_t token = read_u32_le(&script[offset], 0);
             offset += 4;
 
@@ -565,7 +523,6 @@ int get_dfi_tx_type(const uint8_t script[],
 
             uint64_t amountU64 = read_u64_le(&script[offset], 0);
             offset += 8;
-            PRINTF("TOKEN (%d) Amount: %d: %d - %s\n", offset, (int)amountU64, (int)token, token_str);
 
             uint32_t token2 = read_u32_le(&script[offset], 0);
             offset += 4;
@@ -575,7 +532,7 @@ int get_dfi_tx_type(const uint8_t script[],
 
             uint64_t amountU642 = read_u64_le(&script[offset], 0);
             offset += 8;
-            PRINTF("TOKEN2 (%d) Amount: %d: %d - %s\n", offset, (int)amountU642, (int)token2, token_str2);
+            *amount = amountU642;
 
             uint8_t share_address[MAX_ADDRESS_LENGTH_STR];
             int shared_address_len = getScript(&script[offset], script_len - offset, share_address);
@@ -583,13 +540,11 @@ int get_dfi_tx_type(const uint8_t script[],
 
             char output_address[MAX(MAX_ADDRESS_LENGTH_STR + 1, MAX_OPRETURN_OUTPUT_DESC_SIZE)];
             int address_len = get_script_address(share_address,
-                                        shared_address_len-1,
-                                        G_coin_config,
-                                        output_address,
-                                        sizeof(output_address));
+                                                    shared_address_len-1,
+                                                    G_coin_config,
+                                                    output_address,
+                                                    sizeof(output_address));
 
-            PRINTF("output_address is: %d (offset %d)\n", share_address, offset);
-            PRINTF("output_address: %s\n", output_address);
 
             int out_ctr = 17;
             strcpy(out, "Add Liquidity to ");
@@ -612,10 +567,6 @@ int get_dfi_tx_type(const uint8_t script[],
             out_ctr += 16;
             strcpy(out + out_ctr, output_address);
             out_ctr += address_len;
-
-            PRINTF("(%d/%d) %s\n", out_ctr, out_len, out);
-
-            *amount = amountU642;
             return out_ctr;
         }
         case RemovePoolLiquidity: {
@@ -634,9 +585,7 @@ int get_dfi_tx_type(const uint8_t script[],
             uint64_t amountU64 = read_u64_le(&script[offset], 0);
             offset += 8;
             
-            PRINTF("TOKEN (%d) Amount: %d: %d - %s\n", offset, (int)amountU64, (int)token, token_str);
-
-                int out_ctr = 16;
+            int out_ctr = 16;
             strcpy(out, "Remove Liquidity");
             return out_ctr;
         }

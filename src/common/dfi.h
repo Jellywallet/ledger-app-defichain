@@ -1,6 +1,7 @@
 
 
-#define DFI_TX_HEADER { 0x44, 0x66, 0x54, 0x78}
+#define DFI_TX_HEADER \
+    { 0x44, 0x66, 0x54, 0x78}
 
 enum DfiCustomTxType {
     None = 0,
