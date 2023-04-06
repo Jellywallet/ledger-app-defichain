@@ -867,7 +867,7 @@ static void process_output_map(dispatcher_context_t *dc) {
                                                sizeof(state->cur.in_out.scriptPubKey));
 
     if (result_len == -1 || result_len > (int) sizeof(state->cur.in_out.scriptPubKey)) {
-            SEND_SW(dc, SW_INCORRECT_DATA);
+        SEND_SW(dc, SW_INCORRECT_DATA);
         return;
     }
 
@@ -920,13 +920,9 @@ static void output_validate_external(dispatcher_context_t *dc) {
     if (address_len < 0) {
         // script does not have an address; check if OP_RETURN
         if (is_opreturn(state->cur.in_out.scriptPubKey, state->cur.in_out.scriptPubKey_len)) {
-            
-           
             int res = format_opscript_script(state->cur.in_out.scriptPubKey,
                                              state->cur.in_out.scriptPubKey_len,
                                              output_address, &is_dfi_tx, &state->cur.output.value, G_coin_config);
-
-            
             if (res == -1) {
                 PRINTF("Invalid or unsupported OP_RETURN for output %d\n", state->cur_output_index);
                 SEND_SW(dc, SW_NOT_SUPPORTED);
@@ -956,8 +952,6 @@ static void output_validate_external(dispatcher_context_t *dc) {
             return;
         }
     } else {
-
-        
         // Show address to the user
         ui_validate_output(dc,
                            state->external_outputs_count,

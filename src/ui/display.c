@@ -288,7 +288,7 @@ UX_STEP_NOCB(ux_validate_dfi_tx_step,
              {
                  .title = "Type",
                  .text = g_ui_state.validate_output.address_or_description,
-             });             
+             });
 
 UX_STEP_NOCB(ux_confirm_transaction_step, pnn, {&C_icon_eye, "Confirm", "transaction"});
 UX_STEP_NOCB(ux_confirm_transaction_fees_step,
@@ -721,15 +721,13 @@ void ui_validate_output(dispatcher_context_t *context,
 
     g_next_processor = on_success;
 
-    if(is_dfi_tx) {
-        if(amount == 0) {
+    if (is_dfi_tx) {
+        if (amount == 0) {
             ux_flow_init(0, ux_display_output_address_amount_flow_dfi_without_amount, NULL);
+        } else {
+            ux_flow_init(0, ux_display_output_address_amount_flow_dfi, NULL);
         }
-        else {
-            ux_flow_init(0, ux_display_output_address_amount_flow_dfi, NULL);   
-        }
-    }
-    else {
+    } else {
         ux_flow_init(0, ux_display_output_address_amount_flow, NULL);
     }
 }
