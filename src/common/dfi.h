@@ -84,4 +84,5 @@ int get_dfi_tx_type(const uint8_t script[],
                        size_t script_len,
                        char *out,
                        size_t out_len,
-                       uint64_t* amount);
+                       uint64_t* amount,
+                       global_context_t *G_coin_config);

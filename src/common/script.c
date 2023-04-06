@@ -65,6 +65,8 @@ int get_script_address(const uint8_t script[],
                        size_t out_len) {
     int script_type = get_script_type(script, script_len);
     int addr_len;
+    PRINTF("Parsing address type %d\n", script_type);
+
     switch (script_type) {
         case SCRIPT_TYPE_P2PKH:
         case SCRIPT_TYPE_P2SH: {
@@ -81,6 +83,7 @@ int get_script_address(const uint8_t script[],
         case SCRIPT_TYPE_P2WSH:
         case SCRIPT_TYPE_P2TR:
         case SCRIPT_TYPE_UNKNOWN_SEGWIT: {
+            
             uint8_t prog_len = script[1];  // length of the witness program
 
             // witness program version
@@ -99,6 +102,7 @@ int get_script_address(const uint8_t script[],
                                          script + 2,
                                          prog_len);
             if (ret != 1) {
+                PRINTF("Should never happen\n");
                 return -1;  // should never happen
             }
 
@@ -120,7 +124,8 @@ int format_opscript_script(const uint8_t script[],
                            size_t script_len,
                            char out[static MAX_OPRETURN_OUTPUT_DESC_SIZE],
                            bool* isDfiTx,
-                           uint64_t* amount) {
+                           uint64_t* amount,
+                           global_context_t *G_coin_config) {
     if (script_len == 0 || script[0] != OP_RETURN) {
         return -1;
     }
@@ -150,7 +155,7 @@ int format_opscript_script(const uint8_t script[],
 
                 PRINTF("PARSE DFI SCRIPT\n");
                 *isDfiTx = true;
-                return get_dfi_tx_type(&script[dfiHeaderPos+4], defiScriptLen, out, MAX_OPRETURN_OUTPUT_DESC_SIZE, amount);
+                return get_dfi_tx_type(&script[dfiHeaderPos+4], defiScriptLen, out, MAX_OPRETURN_OUTPUT_DESC_SIZE, amount, G_coin_config);
             }
         }
     }

@@ -726,7 +726,7 @@ void ui_validate_output(dispatcher_context_t *context,
             ux_flow_init(0, ux_display_output_address_amount_flow_dfi_without_amount, NULL);
         }
         else {
-            ux_flow_init(0, ux_display_output_address_amount_flow_dfi, NULL);
+            ux_flow_init(0, ux_display_output_address_amount_flow_dfi, NULL);   
         }
     }
     else {

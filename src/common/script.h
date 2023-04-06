@@ -226,4 +226,5 @@ int format_opscript_script(const uint8_t script[],
                            size_t script_len,
                            char out[static MAX_OPRETURN_OUTPUT_DESC_SIZE],
                            bool* isDfiTx,
-                           uint64_t* amount);
+                           uint64_t* amount,
+                           global_context_t *G_coin_config);

@@ -916,18 +916,23 @@ static void output_validate_external(dispatcher_context_t *dc) {
                                          G_coin_config,
                                          output_address,
                                          sizeof(output_address));
+
     if (address_len < 0) {
         // script does not have an address; check if OP_RETURN
         if (is_opreturn(state->cur.in_out.scriptPubKey, state->cur.in_out.scriptPubKey_len)) {
             
+           
             int res = format_opscript_script(state->cur.in_out.scriptPubKey,
                                              state->cur.in_out.scriptPubKey_len,
-                                             output_address, &is_dfi_tx, &state->cur.output.value);
+                                             output_address, &is_dfi_tx, &state->cur.output.value, G_coin_config);
+
+            
             if (res == -1) {
                 PRINTF("Invalid or unsupported OP_RETURN for output %d\n", state->cur_output_index);
                 SEND_SW(dc, SW_NOT_SUPPORTED);
                 return;
             }
+
         } else {
             PRINTF("Unknown or unsupported script type for output %d\n", state->cur_output_index);
             SEND_SW(dc, SW_NOT_SUPPORTED);
