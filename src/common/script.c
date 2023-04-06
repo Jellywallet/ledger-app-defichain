@@ -12,12 +12,9 @@
 #include "../crypto.h"
 #endif
 
-#define IS_DEFICHAIN 1
-
 #ifdef IS_DEFICHAIN
 #include "dfi.h"
 #endif
-
 
 int get_script_type(const uint8_t script[], size_t script_len) {
     if (script_len == 25 && script[0] == OP_DUP && script[1] == OP_HASH160 && script[2] == 0x14 &&
