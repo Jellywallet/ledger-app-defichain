@@ -423,7 +423,7 @@ int get_dfi_tx_type(const uint8_t script[],
 
             char output_address[MAX(MAX_ADDRESS_LENGTH_STR + 1, MAX_OPRETURN_OUTPUT_DESC_SIZE)];
             int address_len = get_script_address(to_address,
-                                                 to_address_len-1,
+                                                 to_address_len - 1,
                                                  G_coin_config,
                                                  output_address,
                                                  sizeof(output_address));
@@ -447,8 +447,8 @@ int get_dfi_tx_type(const uint8_t script[],
             strcpy(out + out_ctr, token_str);
             out_ctr += token_str_len;
 
-            strcpy(out+ out_ctr, " to ");
-            out_ctr+=4;
+            strcpy(out + out_ctr, " to ");
+            out_ctr += 4;
 
             strcpy(out + out_ctr, output_address);
             out_ctr += address_len;
@@ -540,7 +540,7 @@ int get_dfi_tx_type(const uint8_t script[],
 
             char output_address[MAX(MAX_ADDRESS_LENGTH_STR + 1, MAX_OPRETURN_OUTPUT_DESC_SIZE)];
             int address_len = get_script_address(share_address,
-                                                 shared_address_len-1,
+                                                 shared_address_len - 1,
                                                  G_coin_config,
                                                  output_address,
                                                  sizeof(output_address));
@@ -557,7 +557,7 @@ int get_dfi_tx_type(const uint8_t script[],
             out_ctr += token_str_len;
 
             strcpy(out + out_ctr, "-d");
-            out_ctr+=2;
+            out_ctr += 2;
 
             strcpy(out + out_ctr, token_str2);
             out_ctr += token_str_len2;

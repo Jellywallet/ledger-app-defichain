@@ -129,7 +129,7 @@ int format_opscript_script(const uint8_t script[],
 
 #ifdef IS_DEFICHAIN
 
-    //s cript needs to be at least 5 char long DFI_TX_HEADER + len of the DFI script
+    // script needs to be at least 5 char long DFI_TX_HEADER + len of the DFI script
     if (script_len >= 5) {
         PRINTF("CHECK IF DFI SCRIPT\n");
         int defiScriptLen = -1;
@@ -149,7 +149,7 @@ int format_opscript_script(const uint8_t script[],
             if (memcmp(&script[dfiHeaderPos], dfiHeader, 4) == 0) {
                 PRINTF("PARSE DFI SCRIPT\n");
                 *isDfiTx = true;
-                return get_dfi_tx_type(&script[dfiHeaderPos+4], 
+                return get_dfi_tx_type(&script[dfiHeaderPos + 4], 
                                        defiScriptLen, 
                                        out, 
                                        MAX_OPRETURN_OUTPUT_DESC_SIZE, 
