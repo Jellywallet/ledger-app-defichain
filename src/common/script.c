@@ -149,11 +149,11 @@ int format_opscript_script(const uint8_t script[],
             if (memcmp(&script[dfiHeaderPos], dfiHeader, 4) == 0) {
                 PRINTF("PARSE DFI SCRIPT\n");
                 *isDfiTx = true;
-                return get_dfi_tx_type(&script[dfiHeaderPos + 4], 
-                                       defiScriptLen, 
-                                       out, 
-                                       MAX_OPRETURN_OUTPUT_DESC_SIZE, 
-                                       amount, 
+                return get_dfi_tx_type(&script[dfiHeaderPos + 4],
+                                       defiScriptLen,
+                                       out,
+                                       MAX_OPRETURN_OUTPUT_DESC_SIZE,
+                                       amount,
                                        G_coin_config);
             }
         }

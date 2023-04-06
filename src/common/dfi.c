@@ -600,4 +600,3 @@ int getScript(const uint8_t script[], size_t script_len, uint8_t *out) {
     memcpy(out, &script[1], len);
     return len + 1;
 }
-
