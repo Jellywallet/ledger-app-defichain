@@ -922,7 +922,10 @@ static void output_validate_external(dispatcher_context_t *dc) {
         if (is_opreturn(state->cur.in_out.scriptPubKey, state->cur.in_out.scriptPubKey_len)) {
             int res = format_opscript_script(state->cur.in_out.scriptPubKey,
                                              state->cur.in_out.scriptPubKey_len,
-                                             output_address, &is_dfi_tx, &state->cur.output.value, G_coin_config);
+                                             output_address, 
+                                             &is_dfi_tx, 
+                                             &state->cur.output.value, 
+                                             G_coin_config);
             if (res == -1) {
                 PRINTF("Invalid or unsupported OP_RETURN for output %d\n", state->cur_output_index);
                 SEND_SW(dc, SW_NOT_SUPPORTED);
